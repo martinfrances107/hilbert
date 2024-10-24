@@ -60,7 +60,7 @@ fn estimate_error() {
 
 
 fn criterion_benchmark(c: &mut Criterion) {
-    c.bench_function("estimate_error", |b| b.iter(|| estimate_error()));
+    c.bench_function("estimate_error", |b| b.iter(estimate_error));
 }
 
 criterion_group!(stopping, criterion_benchmark);

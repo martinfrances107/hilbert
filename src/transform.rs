@@ -115,7 +115,7 @@ pub mod fast_hilbert {
         {
             let mut dimension = start_dimension;
             while dimension != stop_dimension {
-                axes_vector[dimension as usize] = axes_vector[dimension as usize] | ((bits[bit_index] as u32) << bit_number);
+                axes_vector[dimension as usize] |= (bits[bit_index] as u32) << bit_number;
                 bit_index += 1;
                 dimension += dim_increment;
             }
@@ -333,8 +333,8 @@ pub mod fast_hilbert {
     pub fn hilbert_index(hilbert_axes : &[u32], bits : usize, interleaver_option : Option<&Interleaver>) -> BigUint
     {
         let transposed_index = hilbert_index_transposed(hilbert_axes, bits);
-        let index = untranspose(&transposed_index, bits, interleaver_option);
-        index
+        
+        untranspose(&transposed_index, bits, interleaver_option)
     }
 
 }

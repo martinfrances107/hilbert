@@ -109,11 +109,9 @@ mod tests {
         let float_points = test_points_f64();
         let (actual_points, bits_used) = super::make_points_f64(&float_points, 0, None, None, 10.0);
         asserting("correct bits_used").that(&bits_used).is_equal_to(11);
-        let expected_points = vec![
-            Point::new(0, &vec![895, 1053, 1037]),
-            Point::new(0, &vec![952, 1202, 2002]),
-            Point::new(0, &vec![1420, 0, 1000])
-        ];
+        let expected_points = [Point::new(0, &[895, 1053, 1037]),
+            Point::new(0, &[952, 1202, 2002]),
+            Point::new(0, &[1420, 0, 1000])];
         for i in 0..3 {
             let expected_point = &expected_points[i];
             let actual_point = &actual_points[i];

@@ -64,11 +64,11 @@ impl StoppingReason {
     }
     pub fn get_status(&self) -> IterationStatus {
         match self {
-            StoppingReason::TimeLimit(s) => s.clone(),
-            StoppingReason::SampleLimit(s) => s.clone(),
-            StoppingReason::LowEstimatedError(s) => s.clone(),
-            StoppingReason::SmallDeviation(s) => s.clone(),
-            StoppingReason::Continue(s) => s.clone()
+            StoppingReason::TimeLimit(s) => *s,
+            StoppingReason::SampleLimit(s) => *s,
+            StoppingReason::LowEstimatedError(s) => *s,
+            StoppingReason::SmallDeviation(s) => *s,
+            StoppingReason::Continue(s) => *s
         }
     }
 }
@@ -161,11 +161,11 @@ impl StoppingCriteria {
         permitted_coeff_of_quartile_dev: f64
     ) -> Self {
         StoppingCriteria {
-            permitted_elapsed_time: permitted_elapsed_time,
-            minimum_iterations: minimum_iterations,
-            permitted_iterations: permitted_iterations,
-            permitted_error: permitted_error,
-            permitted_coeff_of_quartile_dev: permitted_coeff_of_quartile_dev,
+            permitted_elapsed_time,
+            minimum_iterations,
+            permitted_iterations,
+            permitted_error,
+            permitted_coeff_of_quartile_dev,
             // The Quantogram abs rel error must be smaller than the desired error for the integration. 
             // Making it 1/10th slowed things down a lot due to hsm calcs. 1/2 works well.
             estimates: QuantogramBuilder::new().with_error(permitted_error / 2.0).build(),

@@ -99,7 +99,7 @@ impl IntegerDataRange {
         let mut low = i32::MAX;
         let mut high = i32::MIN;
         for point in points.iter() {
-            for coordinate in point.into_iter().map(|c| *c) {
+            for coordinate in point.into_iter().copied() {
                 if coordinate > high { high = coordinate; }
                 if coordinate < low { low = coordinate; }
             }
@@ -204,7 +204,7 @@ impl FloatDataRange {
         let mut low = f64::MAX;
         let mut high = f64::MIN;
         for point in points.iter() {
-            for coordinate in point.into_iter().map(|c| *c) {
+            for coordinate in point.into_iter().copied() {
                 if coordinate > high { high = coordinate; }
                 if coordinate < low { low = coordinate; }
             }

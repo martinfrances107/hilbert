@@ -69,8 +69,8 @@ impl Point {
     pub fn new(id : usize, coords : &[u32]) -> Point {
         Point {
             id, 
-            coordinates : coords.iter().map(|c| c.clone()).collect(), 
-            square_magnitude : coords.iter().fold(0_u64, |sum,coord| sum + (coord.clone() as u64) * (coord.clone() as u64))
+            coordinates : coords.to_vec(), 
+            square_magnitude : coords.iter().fold(0_u64, |sum,coord| sum + (*coord as u64) * (*coord as u64))
         }
     }
 

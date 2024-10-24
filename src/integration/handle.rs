@@ -96,7 +96,7 @@ impl Handle {
             (_, None) => None,
             (Handle::Heap(0), Some(_level)) => Some(0),
             (Handle::Heap(i), Some(level)) => Some(*i as u32 + 1 - (1_u32 << level)),
-            (Handle::Map(i), Some(level)) => Some(*i as u32 + 1 - (1_u32 << level)),
+            (Handle::Map(i), Some(level)) => Some({ *i } + 1 - (1_u32 << level)),
             _ => None
         }
     }  
@@ -119,7 +119,7 @@ impl Handle {
 
     /// Decide if the normalized_index falls in the range defined by this Handle.
     pub fn includes(&self, normalized_index: f64) -> bool {
-        if normalized_index < 0.0 || normalized_index >= 1.0 || !normalized_index.is_finite() {
+        if !(0.0..1.0).contains(&normalized_index) || !normalized_index.is_finite() {
             false
         }
         else {

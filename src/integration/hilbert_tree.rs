@@ -168,7 +168,7 @@ impl<M> HilbertTree<M> where M: HilbertModel {
         const INIT:TreeNode = TreeNode::Empty;
         const HEAP_SIZE: usize = 65536;
         let mut tree = HilbertTree {
-            model: model,
+            model,
             heap: Vec::with_capacity(HEAP_SIZE),
             map: HashMap::new(),
             terminus: TreeNode::Terminus(Box::new(
@@ -200,7 +200,7 @@ impl<M> HilbertTree<M> where M: HilbertModel {
         self.heap[0] = TreeNode::RootLeaf(Box::new(
             Segment {
                 start_point: origin_point,
-                value: value,
+                value,
                 end_handle: Handle::Terminus
             })
         );
@@ -209,8 +209,8 @@ impl<M> HilbertTree<M> where M: HilbertModel {
     fn terminus_point(&self) -> Vec<f64> {
         let shift = self.model.bits() as usize * self.model.dimensions() as usize;
         let terminus = BigUint::one().shl(shift) - BigUint::one();
-        let terminus_point = self.model.to_point(&terminus);
-        terminus_point
+        
+        self.model.to_point(&terminus)
     }
 
 
@@ -303,7 +303,7 @@ impl<M> HilbertTree<M> where M: HilbertModel {
         let distance = self.model.distance(start_point, end_point);
         SegmentMeasure {
             value: start_value,
-            distance: distance,
+            distance,
             slope: (end_value - start_value) / distance
         }
     }
@@ -338,7 +338,7 @@ impl<M> HilbertTree<M> where M: HilbertModel {
     /// where each segment's probability of being chosen is proportional
     /// to its Hilbert curve length.
     pub fn find_leaf(&self, normalized_index: f64) -> Handle {
-        if normalized_index < 0.0 || normalized_index >= 1.0 { return Handle::None; }
+        if !(0.0..1.0).contains(&normalized_index) { return Handle::None; }
 
         // The root includes the normalized_index by default (if in range).
         let mut current_handle = Handle::new(0);  
@@ -426,7 +426,7 @@ impl<M> HilbertTree<M> where M: HilbertModel {
             Handle::Map(i) => {
                 match self.map.get(&i) {
                     None => &empty,
-                    Some(node) => &node
+                    Some(node) => node
                 }
             }
         };
@@ -493,7 +493,7 @@ impl<M> HilbertTree<M> where M: HilbertModel {
                 self.set_node(right_handle, TreeNode::RightLeaf(Box::new(
                     Segment {
                         start_point: point,
-                        value: value,
+                        value,
                         end_handle: self.get_end_node_handle(bisect_at)
                     }
                 )));
@@ -504,7 +504,7 @@ impl<M> HilbertTree<M> where M: HilbertModel {
                 self.set_node(right_handle, TreeNode::RightLeaf(Box::new(
                     Segment {
                         start_point: point,
-                        value: value,
+                        value,
                         end_handle: self.get_end_node_handle(bisect_at)
                     }
                 )));
@@ -516,7 +516,7 @@ impl<M> HilbertTree<M> where M: HilbertModel {
                 self.set_node(right_handle, TreeNode::RightLeaf(Box::new(
                     Segment {
                         start_point: point,
-                        value: value,
+                        value,
                         end_handle: root_end_handle
                     }
                 )));
@@ -600,13 +600,13 @@ impl<M> HilbertTree<M> where M: HilbertModel {
         let level = node.level().unwrap() as usize;
         let numerator = node.numerator().unwrap();
         let denominator = 1_usize << level;   
-        let name = if level == 0 {
-            format!("[0,1)")
+        
+        if level == 0 {
+            "[0,1)".to_string()
         }
         else {
             format!("[{}/{},{}/{})", numerator, denominator, numerator + 1, denominator)
-        };
-        name
+        }
     }
 
     /// Format the tree as a DOT string that Graphviz can render as a Binary tree diagram.
@@ -629,13 +629,11 @@ digraph BST {{
 
     \"{}\" [shape=doublecircle,label=\"{}\"]", name, label));
         }
-        else { 
-            if self.is_leaf(node) {
-                output.push_str(&format!("    \"{}\" [shape=octagon,label=\"{}\"];\n", name, label));
-            }
-            else {
-                output.push_str(&format!("\n    \"{}\" [label=\"{}\"];", name, label));
-            }
+        else if self.is_leaf(node) {
+            output.push_str(&format!("    \"{}\" [shape=octagon,label=\"{}\"];\n", name, label));
+        }
+        else {
+            output.push_str(&format!("\n    \"{}\" [label=\"{}\"];", name, label));
         }
         
         if !self.is_leaf(node) {
@@ -695,8 +693,8 @@ mod tests {
         assert!(Handle::new(2).includes(0.75));
         assert!(Handle::new(3).includes(0.125));
         assert!(Handle::new(4).includes(0.25));
-        assert_eq!(Handle::new(5).includes(0.25), false);
-        assert_eq!(Handle::new(6).includes(f64::NAN), false);
+        assert!(!Handle::new(5).includes(0.25));
+        assert!(!Handle::new(6).includes(f64::NAN));
     }
 
     #[test]
@@ -753,9 +751,9 @@ digraph BST {
 
     fn create_test_model() -> Box<impl HilbertModel> {
         let f = |p: &[f64]| -> f64 { 
-            let y = p[0]*p[1] + 1.0;
+            
             // println!("eval f(p) for [{},{}] = {}", p[0], p[1], y);
-            y
+            p[0]*p[1] + 1.0
         };
         let ranges = vec![
             DimensionRange::new(0.0, 1024.0, 1.0, 20),

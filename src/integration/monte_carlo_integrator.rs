@@ -75,8 +75,8 @@ mod tests {
         let f = |p: &[f64]| -> f64 { 
             let x = p[0];
             let y = p[1];
-            let z = 4.0 + (10.0 * x * y * (x+y).sin() / (x*x + y*y + 1.0));
-            z
+            
+            4.0 + (10.0 * x * y * (x+y).sin() / (x*x + y*y + 1.0))
         };
         let lower: [f64;2] = [-8.0,-8.0];
         let upper: [f64;2] = [8.0,8.0];

@@ -91,10 +91,10 @@ impl Permutation {
         let mut expected_xor : usize = 0;
         let mut xor : usize = 0;
         for (i, dim) in self.moves_to.iter().enumerate() {
-            if dim.clone() as u64 > n { return false; }
+            if *dim as u64 > n { return false; }
             xor ^= dim;
             expected_xor ^= i;
-            let dim64 : u64 = dim.clone() as u64;
+            let dim64 : u64 = *dim as u64;
             sum += dim64;
             squares += dim64 * dim64;
         }

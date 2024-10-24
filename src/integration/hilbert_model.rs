@@ -63,7 +63,7 @@ impl DimensionRange {
         if weight <= 0.0 {
             panic!("Weight must be positive");
         }
-        if bits < 1 || bits > 32 {
+        if !(1..=32).contains(&bits) {
             panic!("Bits must be between 1 and 31");
         }
         let qmax = 1_u64 << bits;
@@ -72,7 +72,7 @@ impl DimensionRange {
             continuous_maximum: max,
             quantized_maximum: qmax,
             scale: (qmax as f64) / (max - min),
-            weight: weight
+            weight
         }
     }
 
@@ -123,10 +123,10 @@ impl<F> Quantizer<F> where F: Fn(&[f64]) -> f64 {
     pub fn new(ranges: Vec<DimensionRange>, bits: usize, func: F) -> Self {
         let dimensions = ranges.len();
         Self {
-            ranges: ranges,
+            ranges,
             bits_per_dimension: bits,
-            dimensions: dimensions,
-            func: func
+            dimensions,
+            func
         }
     }
 }
